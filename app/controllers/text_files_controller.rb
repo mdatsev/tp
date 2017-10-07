@@ -1,3 +1,6 @@
+require 'csv'
+require 'linear-regression'
+
 class TextFilesController < ApplicationController
   before_action :set_text_file, only: [:show, :edit, :update, :destroy]
 
@@ -10,6 +13,29 @@ class TextFilesController < ApplicationController
   # GET /text_files/1
   # GET /text_files/1.json
   def show
+    arr = CSV.parse(@text_file.content, converters: :numeric);    
+
+    @xs = arr.map { |n| n[0] };
+    @ys =  arr.map { |n| n[1] };
+
+    @linear = Regression::Linear.new(@xs, @ys);
+
+    @sumX = arr.inject(0) {|sum, n| sum + n[0] };
+    #@sumY = arr.inject(0) {|sum, n| sum + (n[2] % 2 == 1 ? n[1] : 0) };
+    incomes = arr.map { |n| n[0] };
+    @max_sum = 0;
+    max_sum_index = 0;
+    for i in 0.. incomes.length - 30
+      sum = 0;
+      for j in 0..29
+        sum += incomes[i+j];
+      end
+      if @max_sum < sum
+        @max_sum = sum; 
+        max_sum_index = i;  
+      end 
+    end
+    @days = incomes[max_sum_index..max_sum_index + 29]
   end
 
   # GET /text_files/new

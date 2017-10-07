@@ -10,5 +10,24 @@
   <%= @text_file.content %>
 </p>
 
+<p>
+  <strong>Sum of column X:</strong>
+  <%= @sumX%>
+</p>
+
+<p>
+  <strong>Sum of column Y if Z is odd:</strong>
+  <%= @sumY%>
+</p>
+
+<p>
+  <strong>Most income:</strong>
+  <%= @max_sum%>
+  <strong>Days:</strong>
+  <% @days.each do |d|%>
+  <li><%=d%></li>
+  <% end %>
+</p>
+
 <%= link_to 'Edit', edit_text_file_path(@text_file) %> |
 <%= link_to 'Back', text_files_path %>
