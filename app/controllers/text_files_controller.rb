@@ -64,8 +64,12 @@ class TextFilesController < ApplicationController
   # POST /text_files
   # POST /text_files.json
   def create
-    @text_file = TextFile.new(text_file_params)
-
+    if(params.has_key?("file"))
+      recieved_file = params["file"];
+      @text_file = TextFile.new({name: recieved_file.original_filename, content: recieved_file.read})
+    else
+      @text_file = TextFile.new(text_file_params)
+    end
     respond_to do |format|
       if @text_file.save
         format.html { redirect_to @text_file, notice: 'Text file was successfully created.' }
