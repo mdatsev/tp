@@ -13,19 +13,18 @@ class TextFilesController < ApplicationController
   # GET /text_files/1
   # GET /text_files/1.json
   def show
+    #csv array
     arr = CSV.parse(@text_file.content, converters: :numeric);    
 
-    @xs = (1..arr.length).to_a;
-    @ys =  arr.map { |n| n[0] };
-
-    @linear = Regression::Linear.new(@xs, @ys);
-
-    @next = @linear.predict(arr.length + 1); 
-
+    #i
     @sumX = arr.inject(0) {|sum, n| sum + n[0] };
+
+    #ii
     @sumY = arr.inject(0) {|sum, n| sum + (!n[2].nil? ? (n[2] % 2 == 1 ? n[1] : 0) : 0)};
+
+    #iii
     incomes = arr.map { |n| n[0] };
-    @max_sum = 0;
+    @max_sum = incomes[0..29].inject(0, :+);
     max_sum_index = 0;
     for i in 0.. incomes.length - 30
       sum = 0;
@@ -38,6 +37,12 @@ class TextFilesController < ApplicationController
       end 
     end
     @days = incomes[max_sum_index..max_sum_index + 29]
+
+    #iv
+    xs = (1..arr.length).to_a;
+    ys =  arr.map { |n| n[0] };
+    linear = Regression::Linear.new(xs, ys);
+    @next = linear.predict(arr.length + 1);
   end
 
   # GET /text_files/new
