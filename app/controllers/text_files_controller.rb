@@ -15,13 +15,15 @@ class TextFilesController < ApplicationController
   def show
     arr = CSV.parse(@text_file.content, converters: :numeric);    
 
-    @xs = arr.map { |n| n[0] };
-    @ys =  arr.map { |n| n[1] };
+    @xs = (1..arr.length).to_a;
+    @ys =  arr.map { |n| n[0] };
 
     @linear = Regression::Linear.new(@xs, @ys);
 
+    @next = @linear.predict(arr.length + 1); 
+
     @sumX = arr.inject(0) {|sum, n| sum + n[0] };
-    #@sumY = arr.inject(0) {|sum, n| sum + (n[2] % 2 == 1 ? n[1] : 0) };
+    @sumY = arr.inject(0) {|sum, n| sum + (!n[2].nil? ? (n[2] % 2 == 1 ? n[1] : 0) : 0)};
     incomes = arr.map { |n| n[0] };
     @max_sum = 0;
     max_sum_index = 0;
