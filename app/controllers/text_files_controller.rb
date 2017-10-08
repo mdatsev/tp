@@ -12,23 +12,30 @@ class TextFilesController < ApplicationController
 
   # GET /text_files/1
   # GET /text_files/1.json
+  
+  ColX = 0;
+  ColY = 1;
+  ColZ = 2;
+  Incomes_col = 0;
+  Succ_days = 30;
+
   def show
     #csv array
     arr = CSV.parse(@text_file.content, converters: :numeric);    
 
     #i
-    @sumX = arr.inject(0) {|sum, n| sum + n[0] };
+    @sumX = arr.inject(0) {|sum, n| sum + n[ColX] };
 
     #ii
-    @sumY = arr.inject(0) {|sum, n| sum + (!n[2].nil? ? (n[2] % 2 == 1 ? n[1] : 0) : 0)};
+    @sumY = arr.inject(0) {|sum, n| sum + (!n[ColZ].nil? ? (n[ColZ] % 2 == 1 ? n[ColY] : 0) : 0)};
 
     #iii
-    incomes = arr.map { |n| n[0] };
-    @max_sum = incomes[0..29].inject(0, :+);
+    incomes = arr.map { |n| n[Incomes_col] };
+    @max_sum = incomes[0..Succ_days-1].inject(0, :+);
     max_sum_index = 0;
-    for i in 0.. incomes.length - 30
+    for i in 0.. incomes.length - Succ_days
       sum = 0;
-      for j in 0..29
+      for j in 0..Succ_days-1
         sum += incomes[i+j];
       end
       if @max_sum < sum
@@ -36,11 +43,11 @@ class TextFilesController < ApplicationController
         max_sum_index = i;  
       end 
     end
-    @days = incomes[max_sum_index..max_sum_index + 29]
+    @days = incomes[max_sum_index..max_sum_index + Succ_days - 1]
 
     #iv
     xs = (1..arr.length).to_a;
-    ys =  arr.map { |n| n[0] };
+    ys =  arr.map { |n| n[Incomes_col] };
     linear = Regression::Linear.new(xs, ys);
     @next = linear.predict(arr.length + 1);
   end
