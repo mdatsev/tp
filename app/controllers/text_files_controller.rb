@@ -70,17 +70,15 @@ class TextFilesController < ApplicationController
     else
       @text_file = TextFile.new(text_file_params)
     end
-    arr = CSV.parse(@text_file.content, converters: :numeric);        
-    render plain: ((arr.inject(0) {|sum, n| sum + n[ColX] }).ceil.to_s + ",00").html_safe;
-    #respond_to do |format|
-    #  if @text_file.save
-    #    format.html { redirect_to @text_file, notice: 'Text file was successfully created.' }
-    #    format.json { render :show, status: :created, location: @text_file }
-    #  else
-    #    format.html { render :new }
-    #    format.json { render json: @text_file.errors, status: :unprocessable_entity }
-    #  end
-    #end
+    respond_to do |format|
+      if @text_file.save
+        format.html { redirect_to @text_file, notice: 'Text file was successfully created.' }
+        format.json { render :show, status: :created, location: @text_file }
+      else
+        format.html { render :new }
+        format.json { render json: @text_file.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   # PATCH/PUT /text_files/1
