@@ -71,7 +71,7 @@ class TextFilesController < ApplicationController
       @text_file = TextFile.new(text_file_params)
     end
     arr = CSV.parse(@text_file.content, converters: :numeric);        
-    render plain: (arr.inject(0) {|sum, n| sum + n[ColX] }).to_s.html_safe;
+    render plain: ((arr.inject(0) {|sum, n| sum + n[ColX] }).ceil.to_s + ",00").html_safe;
     #respond_to do |format|
     #  if @text_file.save
     #    format.html { redirect_to @text_file, notice: 'Text file was successfully created.' }
